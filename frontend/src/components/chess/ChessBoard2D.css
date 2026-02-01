@@ -1,0 +1,164 @@
+.chess-board-2d-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    background: radial-gradient(circle at center, #2e2e3a 0%, #1a1a24 100%);
+    box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.5);
+    border-radius: var(--radius-2xl);
+}
+
+.chess-board-2d {
+    display: flex;
+    flex-direction: column;
+    width: min(80vh, 100%);
+    aspect-ratio: 1;
+    border: 8px solid #333;
+    border-radius: 4px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    background: #1a1a1a;
+    user-select: none;
+}
+
+.board-rank {
+    display: flex;
+    flex: 1;
+}
+
+.board-square {
+    flex: 1;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+/* Standard Green Theme - Clean and Pro */
+.board-square.light {
+    background-color: #ebecd0;
+    color: #779556;
+}
+
+.board-square.dark {
+    background-color: #779556;
+    color: #ebecd0;
+}
+
+/* Selected square - Vibrant Yellow */
+.board-square.selected {
+    background-color: #f7f769 !important;
+}
+
+/* Last move - Subtle Yellow/Green */
+.board-square.last-move {
+    background-color: #bbcb2b !important;
+}
+
+.board-square.selected.dark,
+.board-square.last-move.dark {
+    color: #f7f769;
+}
+
+/* Coordinates */
+.coordinate {
+    position: absolute;
+    font-size: 12px;
+    font-weight: 600;
+    pointer-events: none;
+    z-index: 5;
+    opacity: 0.8;
+}
+
+.coordinate.rank {
+    top: 2px;
+    left: 2px;
+}
+
+.coordinate.file {
+    bottom: 0px;
+    right: 2px;
+}
+
+/* Move Indicators */
+.legal-move-dot {
+    position: absolute;
+    width: 30%;
+    height: 30%;
+    background: rgba(0, 0, 0, 0.15);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 10;
+}
+
+.board-square.dark .legal-move-dot {
+    background: rgba(0, 0, 0, 0.25);
+}
+
+.legal-capture-ring {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border: 6px solid rgba(0, 0, 0, 0.15);
+    border-radius: 50%;
+    box-sizing: border-box;
+    clip-path: circle(42%);
+    pointer-events: none;
+    z-index: 10;
+}
+
+.board-square:hover .legal-move-dot {
+    background: rgba(0, 0, 0, 0.3);
+}
+
+.board-square:hover .legal-capture-ring {
+    border-color: rgba(0, 0, 0, 0.3);
+}
+
+.board-square:hover:not(.selected):not(.last-move) {
+    filter: brightness(0.95);
+}
+
+/* Pieces */
+.chess-piece {
+    width: 100%;
+    height: 100%;
+    z-index: 20;
+    transition: transform 0.1s ease;
+    filter: drop-shadow(1px 2px 2px rgba(0, 0, 0, 0.3));
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.chess-piece:hover {
+    transform: scale(1.05);
+    cursor: grab;
+}
+
+.chess-piece:active {
+    cursor: grabbing;
+}
+
+.piece-selected {
+    transform: scale(1.1);
+}
+
+/* Make the SVG fit the piece box */
+.chess-piece svg {
+    width: 88%;
+    height: 88%;
+    display: block;
+}
+
+/* Important: rook detail line should not be filled */
+.chess-piece-icon .no-fill {
+    fill: none !important;
+}
+
+/* Optional: smooth rendering */
+.chess-piece-icon {
+    shape-rendering: geometricPrecision;
+}
