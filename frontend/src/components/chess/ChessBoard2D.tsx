@@ -67,12 +67,42 @@ export const ChessBoard2D: React.FC<ChessBoard2DProps> = ({
             const move = `${game.selectedSquare}${square}`;
             // Check if it's a legal move (simplified check against highlighted)
             if (game.highlightedMoves.includes(move)) {
-                // Instant feedback - clear selection
+                // Determine if this is a promotion (pawn moving to last rank)
+                const piece = boardState.get(game.selectedSquare);
+                let fullMove = move;
+                if (piece?.type.toLowerCase() === 'p') {
+                    const toRank = square[1];
+                    if ((piece.color === 'white' && toRank === '8') || (piece.color === 'black' && toRank === '1')) {
+                        fullMove += 'q'; // Default to queen for simplicity
+                    }
+                }
+
+                // OPTIMISTIC UPDATE
+                // 1. Clear selection immediately
                 setSelectedSquare(null);
                 setHighlightedMoves([]);
 
-                // Execute move
-                await makeMove(move);
+                // 2. Predict the next FEN using chess.js locally
+                try {
+                    const { Chess } = await import('chess.js');
+                    const chess = new Chess(game.fen);
+                    const result = chess.move({ from: game.selectedSquare, to: square, promotion: 'q' });
+
+                    if (result) {
+                        // Apply optimistic state
+                        useGameStore.getState().setGame({
+                            fen: chess.fen(),
+                            turn: chess.turn() === 'w' ? 'white' : 'black',
+                            lastMove: { from: game.selectedSquare, to: square }
+                        });
+                        useGameStore.getState().setIsThinking(true);
+                    }
+                } catch (e) {
+                    console.error("Optimistic update failed", e);
+                }
+
+                // 3. Send to server
+                await makeMove(fullMove);
                 return;
             }
         }
@@ -121,7 +151,13 @@ export const ChessBoard2D: React.FC<ChessBoard2DProps> = ({
             setHighlightedMoves([]);
             lastSelectedSquare.current = null;
         }
+        // Selected opponent piece or out of turn handled above
+        // ... (remaining logic)
     }, [game, boardState, makeMove, setSelectedSquare, setHighlightedMoves, getLegalMovesForSquare, overrideOnSquareClick]);
+
+    // PREVENT INTERACTION WHILE THINKING
+    const { isThinking, isLoading: isGlobalLoading } = useGameStore();
+    const canInteract = !isThinking && !isGlobalLoading;
 
     const renderSquare = (rank: number, file: number) => {
         // Board orientation
@@ -145,9 +181,10 @@ export const ChessBoard2D: React.FC<ChessBoard2DProps> = ({
           board-square 
           ${isDark ? 'dark' : 'light'}
           ${isSelected ? 'selected' : ''}
-          ${(isLastMoveFrom || isLastMoveTo) && showLastMove ? 'last-move' : ''}
+          ${isLastMoveTo && showLastMove ? 'last-move' : ''}
+          ${!canInteract ? 'locked' : ''}
         `}
-                onClick={() => handleSquareClick(squareName)}
+                onClick={() => canInteract && handleSquareClick(squareName)}
                 data-square={squareName}
             >
                 {/* Coordinates */}

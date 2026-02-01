@@ -12,6 +12,7 @@ export function useChessWebSocket() {
         setGame,
         setIsConnected,
         setIsLoading,
+        setIsThinking,
         setError,
         updateFromServer,
         setLastMove
@@ -35,10 +36,12 @@ export function useChessWebSocket() {
 
             if (data.type === 'connected' && data.game) {
                 updateFromServer(data.game);
+                setIsThinking(false);
             }
 
             if (data.type === 'move' && data.data) {
                 updateFromServer(data.data.game);
+                setIsThinking(false);
                 if (data.data.aiMove) {
                     const from = data.data.aiMove.uci.substring(0, 2);
                     const to = data.data.aiMove.uci.substring(2, 4);
@@ -48,6 +51,7 @@ export function useChessWebSocket() {
 
             if (data.type === 'state' && data.game) {
                 updateFromServer(data.game);
+                setIsThinking(false);
             }
         };
 
@@ -62,7 +66,7 @@ export function useChessWebSocket() {
         };
 
         wsRef.current = ws;
-    }, [setIsConnected, setError, updateFromServer, setLastMove]);
+    }, [setIsConnected, setError, updateFromServer, setLastMove, setIsThinking]);
 
     // Connect to AI vs AI game WebSocket
     const connectToAIGame = useCallback((gameId: string) => {
@@ -96,6 +100,7 @@ export function useChessWebSocket() {
 
             if (data.type === 'game_over' && data.game) {
                 updateFromServer(data.game);
+                setIsThinking(false);
             }
 
             if (data.type === 'paused') {
@@ -117,7 +122,7 @@ export function useChessWebSocket() {
         };
 
         aiWsRef.current = ws;
-    }, [setIsConnected, setError, updateFromServer, setLastMove, setGame]);
+    }, [setIsConnected, setError, updateFromServer, setLastMove, setGame, setIsThinking]);
 
     // Create a new game
     const createGame = useCallback(async (options: {

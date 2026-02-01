@@ -26,7 +26,7 @@ export const GamePage: React.FC = () => {
     const [showSetup, setShowSetup] = useState(true);
 
     // Get game state from store
-    const { game } = useGameStore();
+    const { game, error, isLoading, isThinking } = useGameStore();
 
     // Get actions from hook
     const {
@@ -115,8 +115,23 @@ export const GamePage: React.FC = () => {
                                     </>
                                 )}
 
-                                <button className="btn btn--primary btn--large w-full" onClick={handleStartGame}>
-                                    Start Game
+                                {error && (
+                                    <div className="error-alert animate-scale-in">
+                                        <span className="error-icon">⚠️</span>
+                                        <p>{error}</p>
+                                    </div>
+                                )}
+
+                                <button
+                                    className="btn btn--primary btn--large w-full"
+                                    onClick={handleStartGame}
+                                    disabled={isLoading}
+                                >
+                                    {isLoading ? (
+                                        <span className="loading-spinner"></span>
+                                    ) : (
+                                        'Start Game'
+                                    )}
                                 </button>
                             </div>
                         ) : (
@@ -126,6 +141,12 @@ export const GamePage: React.FC = () => {
                                 </div>
 
                                 <div className="status-indicators">
+                                    {isThinking && (
+                                        <div className="status-thinking animate-fade-in">
+                                            <span className="thinking-dots">...</span>
+                                            <span>AI is thinking</span>
+                                        </div>
+                                    )}
                                     {game.isCheck && <div className="indicator warning animate-pulse">CHECK</div>}
                                     {game.isCheckmate && <div className="indicator danger animate-pulse">CHECKMATE</div>}
                                     {game.isDraw && <div className="indicator info">DRAW</div>}

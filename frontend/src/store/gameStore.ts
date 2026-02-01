@@ -57,6 +57,7 @@ interface GameStore {
     game: GameState;
     isConnected: boolean;
     isLoading: boolean;
+    isThinking: boolean;
     error: string | null;
 
     // Actions
@@ -66,6 +67,7 @@ interface GameStore {
     setLastMove: (move: { from: string; to: string } | null) => void;
     setIsConnected: (connected: boolean) => void;
     setIsLoading: (loading: boolean) => void;
+    setIsThinking: (thinking: boolean) => void;
     setError: (error: string | null) => void;
     resetGame: () => void;
 
@@ -99,6 +101,7 @@ export const useGameStore = create<GameStore>((set) => ({
     game: initialGameState,
     isConnected: false,
     isLoading: false,
+    isThinking: false,
     error: null,
 
     setGame: (gameUpdate) => set((state) => ({
@@ -119,6 +122,7 @@ export const useGameStore = create<GameStore>((set) => ({
 
     setIsConnected: (connected) => set({ isConnected: connected }),
     setIsLoading: (loading) => set({ isLoading: loading }),
+    setIsThinking: (thinking) => set({ isThinking: thinking }),
     setError: (error) => set({ error }),
 
     resetGame: () => set({ game: initialGameState, error: null }),

@@ -52,9 +52,16 @@
     background-color: #f7f769 !important;
 }
 
-/* Last move - Subtle Yellow/Green */
+/* Last move - Only highlight destination, remove yellow from source */
 .board-square.last-move {
-    background-color: #bbcb2b !important;
+    background-color: rgba(187, 203, 43, 0.4) !important;
+}
+
+/* Specifically remove highlight from 'from' square if possible, or just make it very subtle */
+/* Since we only have a general 'last-move' class, let's adjust the handle logic or CSS */
+/* Actually, the user wants 'older place' not yellow. Let's make it transparent or very subtle. */
+.board-square.last-move[data-square] {
+    transition: background-color 0.3s ease;
 }
 
 .board-square.selected.dark,
@@ -140,6 +147,17 @@
 
 .chess-piece:active {
     cursor: grabbing;
+}
+
+/* Locked Board Styles */
+.board-square.locked {
+    cursor: wait !important;
+}
+
+.board-square.locked .chess-piece {
+    opacity: 0.8;
+    filter: grayscale(0.2);
+    cursor: wait !important;
 }
 
 .piece-selected {

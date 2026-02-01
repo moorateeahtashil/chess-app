@@ -257,3 +257,68 @@
     border: 1px solid var(--glass-border);
     margin-top: auto;
 }
+
+/* AI Thinking Indicator */
+.status-thinking {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-4);
+    background: rgba(99, 102, 241, 0.1);
+    border: 1px solid rgba(99, 102, 241, 0.2);
+    border-radius: var(--radius-full);
+    color: var(--color-accent-primary);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    margin-bottom: var(--space-4);
+    width: fit-content;
+}
+
+.thinking-dots {
+    display: inline-block;
+    width: 24px;
+    letter-spacing: 2px;
+}
+
+@keyframes dots {
+
+    0%,
+    20% {
+        content: '.';
+    }
+
+    40% {
+        content: '..';
+    }
+
+    60% {
+        content: '...';
+    }
+
+    80%,
+    100% {
+        content: '';
+    }
+}
+
+/* Pulsing effect for the thinking text */
+.status-thinking {
+    animation: thinking-pulse 2s infinite ease-in-out;
+}
+
+@keyframes thinking-pulse {
+    0% {
+        opacity: 0.6;
+        transform: scale(0.98);
+    }
+
+    50% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    100% {
+        opacity: 0.6;
+        transform: scale(0.98);
+    }
+}
