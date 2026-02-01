@@ -7,14 +7,13 @@ import { StudyCenter } from './pages/StudyCenter';
 function App() {
     return (
         <BrowserRouter>
-            <div className="app-container">
-                <Routes>
-                    <Route path="/" element={<Home />} />
-                    <Route path="/play/:mode" element={<GamePage />} />
-                    <Route path="/study" element={<StudyCenter />} />
-                    <Route path="*" element={<Navigate to="/" replace />} />
-                </Routes>
-            </div>
+            {/* Container removed to allow pages to control full layout and show global background */}
+            <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/play/:mode" element={<GamePage />} />
+                <Route path="/study" element={<StudyCenter />} />
+                <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
         </BrowserRouter>
     );
 }

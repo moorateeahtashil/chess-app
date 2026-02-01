@@ -1,11 +1,10 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Chess } from 'chess.js';
-import { fetchOpenings, fetchOpeningCategories, fetchAnalysis, useChessWebSocket } from '../hooks/useChessWebSocket';
+import { fetchOpenings, fetchOpeningCategories, fetchAnalysis } from '../hooks/useChessWebSocket';
 import { Opening, GameState } from '../store/gameStore';
 import { ChessBoard2D } from '../components/chess/ChessBoard2D';
 import { EvaluationBar } from '../components/ui/EvaluationBar';
-import { MoveHistory } from '../components/ui/MoveHistory';
 import './StudyCenter.css';
 
 interface OpeningCategory {
@@ -40,9 +39,6 @@ export const StudyCenter: React.FC = () => {
     const [highlightedMoves, setHighlightedMoves] = useState<string[]>([]);
     const [lastMove, setLastMove] = useState<{ from: string, to: string } | null>(null);
 
-    // Hooks
-    const { createGame: createGameAction } = useChessWebSocket();
-
     useEffect(() => {
         const loadData = async () => {
             try {
@@ -61,7 +57,6 @@ export const StudyCenter: React.FC = () => {
         loadData();
     }, []);
 
-    // When opening is selected, reset board
     useEffect(() => {
         if (selectedOpening && selectedOpening.fen) {
             try {
@@ -90,14 +85,12 @@ export const StudyCenter: React.FC = () => {
     };
 
     const handleSquareClick = (square: string) => {
-        // Simple move logic
         if (selectedSquare) {
-            // Try to move
             try {
                 const move = chess.move({
                     from: selectedSquare,
                     to: square,
-                    promotion: 'q' // Always promote to queen for simplicity in analysis
+                    promotion: 'q'
                 });
 
                 if (move) {
@@ -105,20 +98,14 @@ export const StudyCenter: React.FC = () => {
                     setLastMove({ from: move.from, to: move.to });
                     setSelectedSquare(null);
                     setHighlightedMoves([]);
-
-                    // Run analysis on new position
                     runAnalysis(chess.fen());
                     return;
                 }
-            } catch (e) {
-                // Invalid move
-            }
+            } catch (e) { }
         }
 
-        // Select piece
         const piece = chess.get(square as any);
         if (piece) {
-            // If clicking same square, deselect
             if (selectedSquare === square) {
                 setSelectedSquare(null);
                 setHighlightedMoves([]);
@@ -135,12 +122,9 @@ export const StudyCenter: React.FC = () => {
 
     const handlePractice = async () => {
         if (!selectedOpening) return;
-        // Use createGameAction if we want to create it, or just navigate to generic play with query
-        // Actually, navigate to human-vs-ai with param is better pattern for now
         navigate(`/play/human-vs-ai?opening=${selectedOpening.eco}`);
     };
 
-    // Construct override game state for board
     const studyGameState: GameState = {
         id: 'study',
         mode: 'human_vs_ai',
@@ -148,7 +132,7 @@ export const StudyCenter: React.FC = () => {
         status: 'active',
         whiteDifficulty: 'MEDIUM',
         blackDifficulty: 'MEDIUM',
-        moveHistory: [], // complicated to sync with chess.js history, keeping empty for now
+        moveHistory: [],
         evaluation: analysis ? analysis.evaluation : 0,
         opening: {
             name: selectedOpening?.name || "Custom",
@@ -166,7 +150,6 @@ export const StudyCenter: React.FC = () => {
         lastMove: lastMove,
     };
 
-    // Filter openings
     const filteredOpenings = openings.filter((opening) => {
         const matchesCategory = !selectedCategory || opening.category === selectedCategory;
         const matchesSearch = !searchQuery ||
@@ -179,8 +162,7 @@ export const StudyCenter: React.FC = () => {
 
     return (
         <div className="study-center">
-            {/* Sidebar - preserved */}
-            <aside className="study-center__sidebar">
+            <aside className="study-center__sidebar glass-card">
                 <button className="study-center__back-btn" onClick={() => navigate('/')}>
                     ← Back to Home
                 </button>
@@ -207,9 +189,9 @@ export const StudyCenter: React.FC = () => {
             </aside>
 
             <main className="study-center__main">
-                {/* Search */}
                 <div className="study-center__header-bar">
-                    <div className="study-center__search">
+                    <div className="study-center__search glass-card">
+                        <span className="search-icon">🔍</span>
                         <input
                             type="text"
                             placeholder="Search openings by name or ECO (e.g. B20)..."
@@ -221,13 +203,20 @@ export const StudyCenter: React.FC = () => {
 
                 <div className="study-center__workspace">
                     {!selectedOpening ? (
-                        <div className="study-center__grid">
+                        <div className="study-center__grid animate-fade-in">
                             {isLoading ? <div className="spinner">Loading...</div> :
-                                sortedOpenings.map(opening => (
-                                    <button key={opening.eco} className="study-center__card" onClick={() => setSelectedOpening(opening)}>
+                                sortedOpenings.map((opening, idx) => (
+                                    <button
+                                        key={opening.eco}
+                                        className="study-center__card glass-card"
+                                        onClick={() => setSelectedOpening(opening)}
+                                        style={{ animationDelay: `${idx * 0.05}s` }}
+                                    >
                                         <div className="card-header">
                                             <span className="eco-tag">{opening.eco}</span>
-                                            <span className="popularity">Pop: {Math.round(opening.popularity)}%</span>
+                                            <span className={`popularity-badge ${opening.popularity > 80 ? 'high' : 'normal'}`}>
+                                                Pop: {Math.round(opening.popularity)}%
+                                            </span>
                                         </div>
                                         <h3>{opening.name}</h3>
                                         <p>{opening.category}</p>
@@ -235,12 +224,12 @@ export const StudyCenter: React.FC = () => {
                                 ))}
                         </div>
                     ) : (
-                        <div className="study-center__analysis-view">
+                        <div className="study-center__analysis-view animate-fade-in">
                             <div className="analysis-board-container">
                                 <div className="analysis-eval-bar">
                                     <EvaluationBar evaluation={studyGameState.evaluation} isWhiteToMove={studyGameState.turn === 'white'} />
                                 </div>
-                                <div className="analysis-board">
+                                <div className="analysis-board board-wrapper">
                                     <ChessBoard2D
                                         gameState={studyGameState}
                                         onSquareClick={handleSquareClick}
@@ -248,34 +237,45 @@ export const StudyCenter: React.FC = () => {
                                 </div>
                             </div>
 
-                            <div className="analysis-panel">
+                            <div className="analysis-panel glass-card">
                                 <div className="panel-header">
-                                    <button className="btn-close" onClick={() => setSelectedOpening(null)}>Close Analysis</button>
-                                    <h2>{selectedOpening.name} ({selectedOpening.eco})</h2>
+                                    <h2>{selectedOpening.eco}</h2>
+                                    <button className="btn-close" onClick={() => setSelectedOpening(null)}>✕</button>
                                 </div>
+                                <h3 className="opening-title">{selectedOpening.name}</h3>
 
                                 <div className="panel-content">
-                                    <section className="engine-eval">
+                                    <section className="engine-eval glass-card--elevated">
                                         <h4>Engine Analysis</h4>
-                                        {isAnalyzing ? <p>Thinking...</p> : (
+                                        {isAnalyzing ? <p className="animate-pulse">Thinking...</p> : (
                                             <div className="eval-stats">
-                                                <div className="eval-score">
-                                                    Score: <strong>{analysis?.evaluation.toFixed(2)}</strong>
+                                                <div className="eval-row">
+                                                    <span>Evaluation</span>
+                                                    <strong className={analysis && analysis.evaluation > 0 ? 'text-green' : 'text-red'}>
+                                                        {analysis?.evaluation.toFixed(2)}
+                                                    </strong>
                                                 </div>
-                                                <div className="eval-best-move">
-                                                    Best: <strong>{analysis?.bestMove}</strong>
+                                                <div className="eval-row">
+                                                    <span>Best Move</span>
+                                                    <strong>{analysis?.bestMove}</strong>
                                                 </div>
                                             </div>
                                         )}
                                     </section>
 
                                     <section className="opening-info">
-                                        <h4>Details</h4>
+                                        <h4>Strategic Description</h4>
                                         <p>{selectedOpening.description}</p>
-                                        <div className="opening-stats-bars">
-                                            <div className="stat-row">White Wins: {selectedOpening.statistics.whiteWins}%</div>
-                                            <div className="stat-row">Draws: {selectedOpening.statistics.draws}%</div>
-                                            <div className="stat-row">Black Wins: {selectedOpening.statistics.blackWins}%</div>
+
+                                        <div className="win-rates">
+                                            <div className="rate-bar white" style={{ width: `${selectedOpening.statistics.whiteWins}%` }}></div>
+                                            <div className="rate-bar draw" style={{ width: `${selectedOpening.statistics.draws}%` }}></div>
+                                            <div className="rate-bar black" style={{ width: `${selectedOpening.statistics.blackWins}%` }}></div>
+                                        </div>
+                                        <div className="win-rates-legend">
+                                            <span>⚪ {selectedOpening.statistics.whiteWins}%</span>
+                                            <span>Draw {selectedOpening.statistics.draws}%</span>
+                                            <span>⚫ {selectedOpening.statistics.blackWins}%</span>
                                         </div>
                                     </section>
 
