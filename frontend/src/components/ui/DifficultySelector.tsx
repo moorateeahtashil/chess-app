@@ -1,5 +1,6 @@
 import React from 'react';
 import { Difficulty } from '../../store/gameStore';
+import './DifficultySelector.css';
 
 interface DifficultySelectorProps {
     value: Difficulty;
@@ -7,18 +8,23 @@ interface DifficultySelectorProps {
 }
 
 export const DifficultySelector: React.FC<DifficultySelectorProps> = ({ value, onChange }) => {
-    const difficulties: Difficulty[] = ['EASY', 'MEDIUM', 'HARD', 'MASTER'];
+    const difficulties: { id: Difficulty; label: string; icon: string }[] = [
+        { id: 'EASY', label: 'Easy', icon: '🌱' },
+        { id: 'MEDIUM', label: 'Medium', icon: '⚖️' },
+        { id: 'HARD', label: 'Hard', icon: '🔥' },
+        { id: 'MASTER', label: 'Master', icon: '👑' },
+    ];
 
     return (
-        <div className="difficulty-selector" style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem' }}>
+        <div className="difficulty-grid">
             {difficulties.map((diff) => (
                 <button
-                    key={diff}
-                    onClick={() => onChange(diff)}
-                    className={`btn ${value === diff ? 'btn-primary' : 'btn-secondary'}`}
-                    style={{ flex: 1, padding: '0.5rem', fontSize: '0.8rem' }}
+                    key={diff.id}
+                    onClick={() => onChange(diff.id)}
+                    className={`difficulty-btn glass-card ${value === diff.id ? 'active' : ''}`}
                 >
-                    {diff}
+                    <span className="diff-icon">{diff.icon}</span>
+                    <span className="diff-label">{diff.label}</span>
                 </button>
             ))}
         </div>
