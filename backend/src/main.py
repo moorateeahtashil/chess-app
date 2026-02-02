@@ -10,9 +10,10 @@ from typing import Optional, List, Dict
 import asyncio
 import json
 
-from game_manager import game_manager, GameMode
+from game_manager import game_manager, GameStatus, GameMode
+from chess_engine import ChessAI, Difficulty
 from openings import opening_explorer
-from chess_engine import Difficulty
+from lessons import lessons_manager
 
 app = FastAPI(
     title="Chess Master API",
@@ -236,7 +237,6 @@ async def search_opening(name: str):
 async def analyze_position(request: AnalyzeRequest):
     """Analyze a specific position"""
     import chess
-    from chess_engine import ChessAI, Difficulty
     
     try:
         board = chess.Board(request.fen)
@@ -291,6 +291,24 @@ async def get_difficulties():
             }
         ]
     }
+
+
+# --- Chess Academy Endpoints ---
+
+@app.get("/api/lessons")
+async def get_lessons(difficulty: Optional[str] = None):
+    """Get all lessons, optionally filtered by difficulty"""
+    if difficulty:
+        return {"lessons": lessons_manager.get_lessons_by_difficulty(difficulty)}
+    return {"lessons": lessons_manager.get_all_lessons()}
+
+@app.get("/api/lessons/{lesson_id}")
+async def get_lesson(lesson_id: str):
+    """Get a specific lesson by ID"""
+    lesson = lessons_manager.get_lesson_by_id(lesson_id)
+    if not lesson:
+        raise HTTPException(status_code=404, detail="Lesson not found")
+    return {"lesson": lesson}
 
 
 # WebSocket Endpoints

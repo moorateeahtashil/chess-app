@@ -32,6 +32,36 @@
     color: var(--color-text-primary);
 }
 
+.study-center__mode-tabs {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    margin-bottom: var(--space-6);
+}
+
+.study-mode-tab {
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--radius-lg);
+    border: 1px solid transparent;
+    background: rgba(255, 255, 255, 0.03);
+    color: var(--color-text-secondary);
+    font-weight: 700;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.3s;
+    font-family: var(--font-display);
+}
+
+.study-mode-tab:hover {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.study-mode-tab.active {
+    background: rgba(99, 102, 241, 0.1);
+    border-color: rgba(99, 102, 241, 0.3);
+    color: var(--color-accent);
+}
+
 .study-center__categories {
     display: flex;
     flex-direction: column;
