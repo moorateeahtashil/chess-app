@@ -127,7 +127,7 @@ async def get_game(game_id: str):
 @app.post("/api/games/{game_id}/move")
 async def make_move(game_id: str, request: MakeMoveRequest):
     """Make a move in the game"""
-    result = game_manager.make_human_move(game_id, request.move)
+    result = await game_manager.make_human_move(game_id, request.move)
     
     if "error" in result:
         raise HTTPException(status_code=400, detail=result["error"])
@@ -250,9 +250,9 @@ async def analyze_position(request: AnalyzeRequest):
     
     ai = ChessAI(Difficulty.MASTER)
     
-    # Evaluate
-    eval_score = ai.get_evaluation(board)
-    best_move = ai.get_best_move(board)
+    # Evaluate and search for best move in a background thread
+    eval_score = await asyncio.to_thread(ai.get_evaluation, board)
+    best_move = await asyncio.to_thread(ai.get_best_move, board)
     
     return {
         "fen": request.fen,
@@ -308,12 +308,40 @@ async def websocket_game(websocket: WebSocket, game_id: str):
                 "type": "connected",
                 "game": game.to_dict()
             })
+            
+            # TRIGGER AI MOVE IF IT'S AI TURN ON CONNECT
+            ai_color = "black" if game.is_white_human else "white"
+            is_ai_turn = (ai_color == "white" and game.board.turn) or (ai_color == "black" and not game.board.turn)
+            
+            if is_ai_turn and game.status == GameStatus.ACTIVE:
+                # Give a small delay so client can render
+                await asyncio.sleep(0.5)
+                # We reuse make_human_move but we need a way to trigger AI without a human move
+                # Let's add a helper or just push the move manually and broadcast
+                ai_engine = game_manager.ai_engines.get(game_id, {}).get(ai_color)
+                if ai_engine:
+                    # Offload AI calculation to a thread
+                    move = await asyncio.to_thread(ai_engine.get_best_move, game.board)
+                    if move:
+                        san = game.board.san(move)
+                        game.board.push(move)
+                        game.move_history.append(san)
+                        # Offload evaluation too
+                        game.current_evaluation = await asyncio.to_thread(ai_engine.get_evaluation, game.board)
+                        await manager.broadcast(game_id, {
+                            "type": "move",
+                            "data": {
+                                "success": True,
+                                "game": game.to_dict(),
+                                "aiMove": {"uci": move.uci(), "san": san}
+                            }
+                        })
         
         while True:
             data = await websocket.receive_json()
             
             if data.get("type") == "move":
-                result = game_manager.make_human_move(game_id, data.get("move"))
+                result = await game_manager.make_human_move(game_id, data.get("move"))
                 await manager.broadcast(game_id, {
                     "type": "move",
                     "data": result
@@ -376,7 +404,7 @@ async def websocket_ai_game(websocket: WebSocket, game_id: str):
                     
                 elif data.get("type") == "step":
                     # Make single move when paused
-                    result = game_manager.get_ai_move(game_id)
+                    result = await game_manager.get_ai_move(game_id)
                     if result:
                         await websocket.send_json({
                             "type": "move",
@@ -390,7 +418,7 @@ async def websocket_ai_game(websocket: WebSocket, game_id: str):
             if is_playing:
                 game = game_manager.get_game(game_id)
                 if game and game.status.value == "active":
-                    result = game_manager.get_ai_move(game_id)
+                    result = await game_manager.get_ai_move(game_id)
                     if result:
                         await websocket.send_json({
                             "type": "move",

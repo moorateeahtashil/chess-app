@@ -114,15 +114,9 @@ class GameManager:
             "white" if player_color == "black" else "black": ai
         }
         
-        # If AI is white and we're starting fresh (or opening requires it), AI should move?
-        # Check if it's AI's turn
-        ai_color = "white" if player_color == "black" else "black"
-        is_ai_turn = (ai_color == "white" and board.turn) or (ai_color == "black" and not board.turn)
-        
-        if is_ai_turn:
-             # We need to trigger AI move, but we can't do it async here easily without await.
-             # Client will request updates or we handle it in websocket connection.
-             pass
+        # If AI is white and it is their turn, don't trigger here (WS will handle)
+        # but ensure starting FEN evaluation is set
+        game.current_evaluation = ai.get_evaluation(board)
         
         return game
     
@@ -172,7 +166,7 @@ class GameManager:
         """Get a game by ID"""
         return self.games.get(game_id)
     
-    def make_human_move(self, game_id: str, move_uci: str) -> Dict:
+    async def make_human_move(self, game_id: str, move_uci: str) -> Dict:
         """
         Process a human player's move
         Returns: Updated game state and AI response move (if applicable)
@@ -212,12 +206,14 @@ class GameManager:
         
         if ai and ((game.is_white_human and not game.board.turn) or 
                    (not game.is_white_human and game.board.turn)):
-            ai_move = ai.get_best_move(game.board)
+            # Offload AI calculation to a thread to avoid blocking the event loop
+            ai_move = await asyncio.to_thread(ai.get_best_move, game.board)
             if ai_move:
                 ai_san = game.board.san(ai_move)
                 game.board.push(ai_move)
                 game.move_history.append(ai_san)
-                game.current_evaluation = ai.get_evaluation(game.board)
+                # Offload evaluation too
+                game.current_evaluation = await asyncio.to_thread(ai.get_evaluation, game.board)
                 
                 if game.board.is_game_over():
                     game.status = GameStatus.COMPLETED
@@ -237,7 +233,7 @@ class GameManager:
             "aiMove": None
         }
     
-    def get_ai_move(self, game_id: str) -> Optional[Dict]:
+    async def get_ai_move(self, game_id: str) -> Optional[Dict]:
         """
         Get the next AI move for AI vs AI games
         Returns the move details or None if game ended
@@ -260,14 +256,16 @@ class GameManager:
         if not ai:
             return None
         
-        move = ai.get_best_move(game.board)
+        # Offload AI calculation to a thread to avoid blocking the event loop
+        move = await asyncio.to_thread(ai.get_best_move, game.board)
         if not move:
             return None
         
         san = game.board.san(move)
         game.board.push(move)
         game.move_history.append(san)
-        game.current_evaluation = ai.get_evaluation(game.board)
+        # Offload evaluation too
+        game.current_evaluation = await asyncio.to_thread(ai.get_evaluation, game.board)
         
         if game.board.is_game_over():
             game.status = GameStatus.COMPLETED
