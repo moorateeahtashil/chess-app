@@ -1,99 +1,72 @@
 # ♚ Chess Master 2026
 
-![Hero Screenshot](https://raw.githubusercontent.com/lichess-org/lila/master/public/images/piece/chesscom/wN.png)
-*Next-Generation Chess platform with Asynchronous AI, Opening Explorer, and a premium 2026 UI/UX.*
+![App Hero Image](https://raw.githubusercontent.com/lichess-org/lila/master/public/images/piece/chesscom/wN.png)
+*Designed and Developed by **Tashil***
 
-## 🌟 Overview
-Chess Master 2026 is designed for players who demand precision, speed, and deep analytical capabilities. Built with a high-performance **FastAPI** backend and a reactive **TypeScript** frontend, the platform offers a seamless bridge between competitive play and disciplined study.
+## 🌟 The Ultimate Chess Experience
+Chess Master 2026 is a state-of-the-art platform that combines high-performance engine analysis with a structured learning curriculum. Whether you're a absolute beginner or an aspiring grandmaster, Gravity provides the tools you need to excel.
 
-## 🤖 Advanced AI Architecture (Emphasis)
-The core of Chess Master 2026 is its **Asynchronous AI Engine**. Unlike traditional chess apps that hang during calculations, our engine operates on a non-blocking thread pool.
+## 🚀 Core Features
 
-### Key AI Features:
-- **Zero-Latency UI**: The frontend remains 100% responsive while the AI calculates deep lines.
-- **Minimax with Alpha-Beta Pruning**: Efficient move searching with optimized leaf evaluation.
-- **Adaptive Difficulty**: Difficulty levels that adjust based on material balance and positional pressure.
-- **Real-Time Evaluation**: A dedicated analysis thread feeds a visual evaluation bar every 500ms.
-
-### Technical Flow:
-```mermaid
-sequenceDiagram
-    participant FE as React Frontend
-    participant WS as WebSocket Manager
-    participant GM as Game Manager
-    participant AI as Chess AI (Async Thread)
-    
-    FE->>WS: Move Signal
-    WS->>GM: Update State
-    GM-->>WS: Broadcast New State
-    WS-->>FE: Update Board UI
-    
-    Note over GM, AI: Request AI Move
-    GM->>AI: Start Analysis
-    AI-->>GM: Best Move Found
-    GM-->>WS: Broadcast AI Move
-    WS-->>FE: Update UI
-```
-
----
-
-## 🎓 Study Center & Academy
-Master the game with our integrated educational suite.
-
-### 📚 Chess Academy
-- **Beginner**: Rules, piece values, and basic checkmates.
-- **Intermediate**: Tactics (pins, forks, skewers) and endgame fundamentals.
-- **Master**: Prophylaxis, pawn structures, and advanced theory.
+### 🤖 High-Performance AI Engine
+Our backend is powered by a custom-built, thread-safe AI engine written in Python. 
+- **Asynchronous Processing**: The engine runs in a dedicated thread pool. This means the UI never freezes, even when the AI is thinking 10+ moves ahead.
+- **Minimax Algorithm**: Uses advanced search techniques with Alpha-Beta pruning for tactical precision.
+- **Real-Time Evaluation Bar**: Watch the balance of power shift with our interactive evaluation bar that reflects engine insights every half-second.
 
 ### 🧭 Opening Explorer
-- Access a database of over **3,000+ ECO-coded openings**.
-- Real-time win/loss/draw statistics for every line.
-- Practice mode to drill specific openings against the computer.
+Master the first phase of the game with our deep opening database.
+- **3,000+ Openings**: Browse through the Encyclopedia of Chess Openings (ECO).
+- **Interactive Practice**: Select any opening and start a practice game directly from that position.
+- **Win Rates & Stats**: Analyze historical performance for every line to choose the best weapons for your repertoire.
+
+### 🎓 Chess Academy
+A revolutionary learning path with **18 comprehensive lessons** (6 per difficulty level).
+- **Horizontal Navigation**: Easily switch between Beginner, Intermediate, and Master tracks.
+- **Interactive Boards**: Every lesson features a live board preview where you can visualize the concepts being taught.
+- **Deep Content**: Lessons cover everything from "How to move the Rook" to "The Lucena Position" and "Positional Sacrifices".
 
 ---
 
-## 🎨 Professional UI/UX (2026 Aesthetics)
-- **Glassmorphism**: Translucent interfaces with backdrop filters.
-- **Micro-animations**: Floating hero elements and stagger-loaded grids.
-- **Responsive Core**: Fully optimized for Desktop, Tablet, and Mobile.
+## 🛠 Technical Highlights
+- **FastAPI Backend**: Rapid, non-blocking API endpoints for game state management.
+- **TypeScript Frontend**: Robust, type-safe React code for a bug-free user experience.
+- **Zustand State**: Ultra-fast state management for smooth board interactions.
+- **Docker Ready**: Launch the entire environment with a single command.
 
 ---
 
-## 🛠 Setup Guide
+## 📸 Application Showroom
 
-### 🐳 Docker (Instant Setup)
+### 🏠 Home Page
+The command center of Gravity. Access all modes from a beautiful, glass-morphic interface.
+![Home Page Screenshot](https://via.placeholder.com/800x450?text=Gravity+Home+Page+Redesign)
+
+### ⚔️ Combat Zone (Play vs AI)
+Pit your skills against our engine. Adjust difficulty on the fly and watch the evaluation bar.
+![Play Mode Screenshot](https://via.placeholder.com/800x450?text=Real-time+AI+Combat+Zone)
+
+### 🏢 Study Center
+The theoretical heart of the app. Explorers and Academics alike find their home here.
+![Study Center Screenshot](https://via.placeholder.com/800x450?text=Advanced+Opening+Explorer)
+
+### 🎓 The Academy
+A structured 6-card grid for each level, providing detailed insights into chess mastery.
+![Academy Screenshot](https://via.placeholder.com/800x450?text=Interactive+Chess+Academy)
+
+---
+
+## 🛠 Quick Start
+
+### 🐳 Docker Deployment
 ```bash
-# Clone and Run
-git clone [repository-url]
 docker-compose up --build
 ```
 *Frontend: http://localhost:3000 | API: http://localhost:8000*
 
-### 💻 Manual Installation
-
-**Backend (Python 3.11+)**
-```bash
-cd backend
-pip install -r requirements.txt
-uvicorn src.main:app --reload
-```
-
-**Frontend (React/TS)**
-```bash
-cd frontend
-npm install
-npm start
-```
+### 💻 Local Setup
+1. **Backend**: `pip install -r requirements.txt` then `python main.py`
+2. **Frontend**: `npm install` then `npm start`
 
 ---
-
-## 🖼 App Screenshots
-> [!TIP]
-> Add your own screenshots here to showcase your custom branding!
-
-| Home Page | Play Mode | Study Center |
-| :--- | :--- | :--- |
-| ![Home](https://via.placeholder.com/400x225?text=Home+Page) | ![Play](https://via.placeholder.com/400x225?text=Play+Mode) | ![Study](https://via.placeholder.com/400x225?text=Study+Center) |
-
----
-**Developed by Antigravity** | *Redefining the digital chessboard.*
+*Built with passion by **Gravity** [2026 Edition].*

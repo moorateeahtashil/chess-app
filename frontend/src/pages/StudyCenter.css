@@ -34,32 +34,37 @@
 
 .study-center__mode-tabs {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     gap: var(--space-2);
-    margin-bottom: var(--space-6);
+    margin-bottom: var(--space-10);
 }
 
 .study-mode-tab {
-    padding: var(--space-3) var(--space-4);
-    border-radius: var(--radius-lg);
-    border: 1px solid transparent;
-    background: rgba(255, 255, 255, 0.03);
+    flex: 1;
+    padding: var(--space-3);
+    text-align: center;
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--glass-border);
+    background: rgba(255, 255, 255, 0.05);
     color: var(--color-text-secondary);
     font-weight: 700;
     cursor: pointer;
-    text-align: left;
-    transition: all 0.3s;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     font-family: var(--font-display);
+    font-size: var(--text-sm);
 }
 
 .study-mode-tab:hover {
-    background: rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
 }
 
 .study-mode-tab.active {
-    background: rgba(99, 102, 241, 0.1);
-    border-color: rgba(99, 102, 241, 0.3);
-    color: var(--color-accent);
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(168, 85, 247, 0.2));
+    border-color: var(--color-accent);
+    color: white;
+    box-shadow: 0 4px 20px rgba(99, 102, 241, 0.3);
 }
 
 .study-center__categories {
