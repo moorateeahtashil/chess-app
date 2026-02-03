@@ -4,7 +4,7 @@
 *Designed and Developed by **Tashil***
 
 ## 🌟 The Ultimate Chess Experience
-Chess Master 2026 is a state-of-the-art platform that combines high-performance engine analysis with a structured learning curriculum. Whether you're a absolute beginner or an aspiring grandmaster, Gravity provides the tools you need to excel.
+Chess Master 2026 is a state-of-the-art platform that combines high-performance engine analysis with a structured learning curriculum. Whether you're a absolute beginner or an aspiring grandmaster, This webapp provides the tools you need to excel.
 
 ## 🚀 Core Features
 
@@ -39,7 +39,7 @@ A revolutionary learning path with **18 comprehensive lessons** (6 per difficult
 ## 📸 Application Showroom
 
 ### 🏠 Home Page
-The command center of Gravity. Access all modes from a beautiful, glass-morphic interface.
+The command center of Chess Master 2026. Access all modes from a beautiful, glass-morphic interface.
 ![Home Page Screenshot](https://via.placeholder.com/800x450?text=Gravity+Home+Page+Redesign)
 
 ### ⚔️ Combat Zone (Play vs AI)
@@ -69,4 +69,4 @@ docker-compose up --build
 2. **Frontend**: `npm install` then `npm start`
 
 ---
-*Built with passion by **Gravity** [2026 Edition].*
+*Built with passion by **Tashil** [2026 Edition].*
