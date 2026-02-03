@@ -1,6 +1,6 @@
 # ♚ Chess Master 2026
 
-![App Hero Image](https://raw.githubusercontent.com/lichess-org/lila/master/public/images/piece/chesscom/wN.png)
+![App Hero Image](./docs/screenshots/app_hero.png)
 *Designed and Developed by **Tashil***
 
 ## 🌟 The Ultimate Chess Experience
@@ -40,19 +40,19 @@ A revolutionary learning path with **18 comprehensive lessons** (6 per difficult
 
 ### 🏠 Home Page
 The command center of Chess Master 2026. Access all modes from a beautiful, glass-morphic interface.
-![Home Page Screenshot](https://via.placeholder.com/800x450?text=Gravity+Home+Page+Redesign)
+![Home Page Screenshot](./docs/screenshots/home_page.png)
 
 ### ⚔️ Combat Zone (Play vs AI)
 Pit your skills against our engine. Adjust difficulty on the fly and watch the evaluation bar.
-![Play Mode Screenshot](https://via.placeholder.com/800x450?text=Real-time+AI+Combat+Zone)
+![Play Mode Screenshot](./docs/screenshots/play_mode.png)
 
 ### 🏢 Study Center
 The theoretical heart of the app. Explorers and Academics alike find their home here.
-![Study Center Screenshot](https://via.placeholder.com/800x450?text=Advanced+Opening+Explorer)
+![Study Center Screenshot](./docs/screenshots/study_center.png)
 
 ### 🎓 The Academy
 A structured 6-card grid for each level, providing detailed insights into chess mastery.
-![Academy Screenshot](https://via.placeholder.com/800x450?text=Interactive+Chess+Academy)
+![Academy Screenshot](./docs/screenshots/academy_view.png)
 
 ---
 
